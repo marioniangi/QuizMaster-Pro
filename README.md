@@ -46,7 +46,7 @@ quiz/
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/marioniangi/quizmaster-pro.git
+   git clone https://github.com/marioniangi/QuizMaster-Pro.git
    ```
 
 2. Importe o banco de dados:
