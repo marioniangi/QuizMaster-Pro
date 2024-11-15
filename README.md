@@ -27,21 +27,19 @@ QuizMaster Pro é uma aplicação de quiz interativa desenvolvida como parte da 
 ## Estrutura do Projeto
 
 ```
-quiz/
-├── assets/
-│   ├── css/
-│   │   ├── estilo.css      # Estilo principal
-│   │   └── admin.css       # Estilo do painel admin
-│   ├── js/
-│   │   ├── quiz.js         # Lógica do jogo
-│   │   └── admin.js        # Funcionalidades admin
-│   └── img/                # Imagens
-├── admin/                  # Arquivos do painel admin
-├── includes/              # Arquivos PHP principais
-├── banco/                 # Arquivos do banco de dados
-└── [Outros arquivos PHP]  # Arquivos da aplicação
+Copyquizmaster-pro/
+├── admin/               # Painel administrativo
+├── assets/             # Recursos estáticos (CSS, JS, imagens)
+├── banco/              # Scripts SQL e backups
+├── includes/           # Arquivos PHP compartilhados
+├── logs/              # Logs do sistema
+├── index.php          # Página inicial
+├── jogar.php          # Interface do quiz
+├── carregar_perguntas.php  # API para carregar perguntas
+├── registrar_resposta.php  # API para registrar respostas
+├── salvar_resultado.php    # API para salvar resultados
+└── ranking.php        # Página de ranking
 ```
-
 ## Instalação
 
 1. Clone o repositório:
