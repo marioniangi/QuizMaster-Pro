@@ -96,6 +96,4 @@ Este projeto está licenciado sob a Licença MIT - consulte o arquivo [LICENSE](
 - Mário Niangi - Líder do Projeto & Desenvolvedor
 
 ## Agradecimentos
-
-- Departamento de Engenharia de Software do ISPTEC
 - Todos os colaboradores e testadores
