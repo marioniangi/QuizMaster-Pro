@@ -1,0 +1,2 @@
+[2024-11-15 08:42:57] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-15 08:48:40] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'

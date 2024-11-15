@@ -1,0 +1,127 @@
+/* Variáveis de cores */
+:root {
+    --cor-primaria: #4361ee;
+    --cor-secundaria: #7209b7;
+    --cor-acento: #3a0ca3;
+    --cor-fundo: #f8f9fa;
+    --cor-texto: #2b2d42;
+    --cor-sucesso: #4caf50;
+    --cor-erro: #f44336;
+}
+
+/* Estilos gerais */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--cor-fundo);
+    color: var(--cor-texto);
+    line-height: 1.6;
+}
+
+.quiz-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Animações */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* Botões personalizados */
+.btn-quiz {
+    background: linear-gradient(45deg, var(--cor-primaria), var(--cor-secundaria));
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-quiz:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+}
+
+/* Cards de categoria */
+.categoria-card {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    cursor: pointer;
+}
+
+.categoria-card:hover {
+    border-color: var(--cor-primaria);
+    transform: translateY(-5px);
+}
+
+/* Estilos para o quiz ativo */
+.pergunta-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    margin-bottom: 1.5rem;
+}
+
+.opcao-resposta {
+    padding: 1rem;
+    margin: 0.5rem 0;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.opcao-resposta:hover {
+    background-color: #f8f9fa;
+    border-color: var(--cor-primaria);
+}
+
+.opcao-resposta.correta {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-color: var(--cor-sucesso);
+}
+
+.opcao-resposta.incorreta {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-color: var(--cor-erro);
+}
+
+/* Placar e feedback */
+.placar {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--cor-primaria);
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.feedback {
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.feedback.sucesso {
+    background-color: rgba(76, 175, 80, 0.1);
+    color: var(--cor-sucesso);
+}
+
+.feedback.erro {
+    background-color: rgba(244, 67, 54, 0.1);
+    color: var(--cor-erro);
+}

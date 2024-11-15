@@ -1,0 +1,127 @@
+[2024-11-12 01:36:06] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.melhor_pontuacao' in 'field list'
+[2024-11-12 01:59:21] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:00:25] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:09:55] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:09:58] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:01] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:02] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:03] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:04] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:04] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:05] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:06] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:07] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:08] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:08] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:11] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:12] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:13] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:14] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:15] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:16] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:18] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:19] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:19] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:22] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:22] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:23] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:24] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:30] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:31] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:34] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:37] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:10:42] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:10:47] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 02:11:36] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 02:11:39] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.melhor_pontuacao' in 'field list'
+[2024-11-12 02:12:23] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.tentativas_login' doesn't exist
+[2024-11-12 02:13:12] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.tentativas_login' doesn't exist
+[2024-11-12 06:45:36] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 06:45:37] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 06:45:50] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 06:45:52] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 06:50:15] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 06:50:16] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 06:50:18] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 06:50:19] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 06:50:20] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 06:50:48] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist - Dados: {"trace":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(35): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 06:50:50] [::1] [Visitante] [erro]: Erro ao buscar configurações: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.configuracoes' doesn't exist
+[2024-11-12 07:05:00] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:05:02] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:05:04] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:05:05] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:05:07] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:05:43] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:07:22] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:07:24] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:07:25] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:07:26] [::1] [Visitante] [erro]: Erro ao carregar perguntas: Não há perguntas suficientes disponíveis para o modo tempo.
+[2024-11-12 07:23:39] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.partidas_respostas' doesn't exist - Dados: {"query":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(173): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 07:24:09] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.partidas_respostas' doesn't exist - Dados: {"query":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(173): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 07:24:42] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.partidas_respostas' doesn't exist - Dados: {"query":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(173): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 07:26:32] [::1] [Visitante] [erro]: Erro de banco de dados ao carregar perguntas: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.partidas_respostas' doesn't exist - Dados: {"query":"#0 C:\\xampp\\htdocs\\quiz\\carregar_perguntas.php(173): PDO->prepare('\\r\\n        SELEC...')\n#1 {main}"}
+[2024-11-12 07:47:25] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.melhor_pontuacao' in 'field list'
+[2024-11-12 07:47:28] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.melhor_pontuacao' in 'field list'
+[2024-11-12 07:47:31] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.modo' in 'where clause'
+[2024-11-12 07:47:33] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.modo' in 'where clause'
+[2024-11-12 07:47:34] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.modo' in 'where clause'
+[2024-11-12 07:47:36] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.ultima_partida' in 'where clause'
+[2024-11-12 07:47:37] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.ultima_partida' in 'where clause'
+[2024-11-12 07:47:39] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.ultima_partida' in 'where clause'
+[2024-11-12 07:47:40] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.ultima_partida' in 'where clause'
+[2024-11-12 07:50:11] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.melhor_pontuacao' in 'field list'
+[2024-11-12 07:50:14] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.modo' in 'where clause'
+[2024-11-12 07:50:15] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.modo' in 'where clause'
+[2024-11-12 07:57:36] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:38] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:38] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:38] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:38] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:39] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:39] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:39] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:40] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:40] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:57:43] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.data_fim' in 'field list'
+[2024-11-12 07:57:57] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:58:02] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.data_fim' in 'field list'
+[2024-11-12 07:58:07] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:58:08] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.data_fim' in 'field list'
+[2024-11-12 07:58:19] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:58:25] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:59:03] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 07:59:09] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.data_fim' in 'field list'
+[2024-11-12 07:59:13] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 08:08:09] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 08:08:55] [::1] [Visitante] [erro]: Erro ao salvar resultado: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'modo' in 'field list'
+[2024-11-12 08:08:57] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.data_fim' in 'field list'
+[2024-11-12 08:09:01] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 08:09:32] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 08:10:01] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 08:16:18] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 08:16:39] [::1] [Visitante] [erro]: Erro ao salvar resultado: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'modo' in 'field list'
+[2024-11-12 08:16:50] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:30:43] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:33:41] [::1] [Visitante] [erro]: Erro ao salvar resultado: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'modo' in 'field list'
+[2024-11-12 09:34:47] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:35:57] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:37:27] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:38:27] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:38:33] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:39:00] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:41:09] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 09:41:14] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.data_fim' in 'field list'
+[2024-11-12 09:41:35] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 10:10:43] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 18:48:31] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 18:49:24] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 18:49:25] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 18:49:26] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 19:04:08] [::1] [Visitante] [erro]: Erro ao criar jogador: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_cadastro' in 'field list'
+[2024-11-12 19:07:01] [::1] [Visitante] [erro]: Erro ao salvar resultado: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'modo' in 'field list'
+[2024-11-12 19:10:40] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 19:11:00] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 19:13:49] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'
+[2024-11-12 19:14:23] [::1] [Visitante] [erro]: Erro ao salvar resultado: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-12 19:19:24] [::1] [Visitante] [erro]: Erro ao buscar estatísticas: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause'

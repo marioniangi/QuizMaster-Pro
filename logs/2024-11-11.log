@@ -1,0 +1,10 @@
+[2024-11-11 20:56:09] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.tentativas_login' doesn't exist
+[2024-11-11 20:56:19] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.tentativas_login' doesn't exist
+[2024-11-11 20:58:16] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'quiz_db.tentativas_login' doesn't exist
+[2024-11-11 21:17:00] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.melhor_pontuacao' in 'field list'
+[2024-11-11 21:17:11] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.modo' in 'where clause'
+[2024-11-11 21:17:13] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'p.modo' in 'where clause'
+[2024-11-11 21:17:16] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.ultima_partida' in 'where clause'
+[2024-11-11 21:17:19] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.ultima_partida' in 'where clause'
+[2024-11-11 21:17:22] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.ultima_partida' in 'where clause'
+[2024-11-11 21:17:25] [::1] [Visitante] [erro]: Erro ao buscar ranking: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.ultima_partida' in 'where clause'
