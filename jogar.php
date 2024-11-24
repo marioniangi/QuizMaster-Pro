@@ -5,6 +5,35 @@ require_once 'includes/config.php';
 require_once 'includes/conexao.php';
 require_once 'includes/funcoes.php';
 
+// Se não houver nome do jogador, pedir para cadastrar
+if (!isset($_SESSION['jogador_id'])) {
+    if (isset($_POST['nome_jogador'])) {
+        try {
+            $nome = limparDados($_POST['nome_jogador']);
+            
+            if (strlen($nome) < 3) {
+                throw new Exception("Nome deve ter pelo menos 3 caracteres.");
+            }
+
+            $jogador_id = criar_jogador($nome);
+            
+            if ($jogador_id) {
+                $_SESSION['jogador_id'] = $jogador_id;
+                $_SESSION['jogador_nome'] = $nome;
+                
+                // Redirecionar para evitar reenvio do formulário
+                header("Location: jogar.php?modo=" . urlencode($modo));
+                exit;
+            } else {
+                $erro = "Erro ao criar jogador. Tente novamente.";
+            }
+        } catch (Exception $e) {
+            registrar_log('erro', 'Erro ao criar jogador: ' . $e->getMessage());
+            $erro = $e->getMessage();
+        }
+    }
+}
+
 // Verificar modo de jogo
 $modos_validos = ['classico', 'tempo', 'desafio'];
 $modo = isset($_GET['modo']) && in_array($_GET['modo'], $modos_validos) ? $_GET['modo'] : 'classico';
@@ -447,4 +476,4 @@ window.addEventListener('error', function(e) {
 }
 </style>
 
-<?php require_once 'includes/footer.php'; ?>
+<?php require_once 'includes/footer.php'; ?>jogar.php

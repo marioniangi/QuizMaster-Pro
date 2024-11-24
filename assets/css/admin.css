@@ -1,334 +1,299 @@
-/* Variáveis de cores do admin */
+/* Variáveis de Cores Modernas */
 :root {
-    --admin-primary: #2c3e50;
-    --admin-secondary: #34495e;
-    --admin-accent: #3498db;
-    --admin-success: #27ae60;
-    --admin-warning: #f1c40f;
-    --admin-danger: #e74c3c;
-    --admin-text: #2c3e50;
-    --admin-bg: #ecf0f1;
-    --admin-sidebar-width: 250px;
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --success: #4cc9f0;
+    --info: #4895ef;
+    --warning: #f72585;
+    --danger: #e63946;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --purple: #7209b7;
+    --pink: #f72585;
+    --indigo: #4361ee;
+    --gradient: linear-gradient(135deg, var(--primary), var(--purple));
 }
 
-/* Layout principal do admin */
+/* Reset e Configurações Básicas */
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f4f6f9;
+}
+
+/* Layout Principal */
 .admin-wrapper {
     display: flex;
     min-height: 100vh;
-    background-color: var(--admin-bg);
 }
 
-/* Sidebar */
+/* Sidebar Estilizada */
 .admin-sidebar {
-    width: var(--admin-sidebar-width);
-    background: linear-gradient(180deg, var(--admin-primary), var(--admin-secondary));
-    color: white;
+    width: 280px;
+    background: var(--gradient);
+    padding: 2rem 1.5rem;
     position: fixed;
     height: 100vh;
     left: 0;
     top: 0;
-    overflow-y: auto;
-    transition: all 0.3s ease;
     z-index: 1000;
+    transition: all 0.3s ease;
 }
 
 .sidebar-header {
-    padding: 1.5rem;
     text-align: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
-.sidebar-header img {
+.sidebar-header h5 {
+    color: white;
+    margin: 1rem 0 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+}
+
+.sidebar-profile img {
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    margin-bottom: 1rem;
+    border: 2px solid rgba(255,255,255,0.2);
 }
 
+.sidebar-profile-info {
+    color: white;
+}
+
+.sidebar-profile-info h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.sidebar-profile-info small {
+    opacity: 0.7;
+}
+
+/* Menu Navegação */
 .admin-menu {
-    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 .menu-item {
-    padding: 0.75rem 1.5rem;
     display: flex;
     align-items: center;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255,255,255,0.8);
+    padding: 1rem;
+    border-radius: 10px;
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
-.menu-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+.menu-item:hover, .menu-item.active {
     color: white;
-}
-
-.menu-item.active {
-    background-color: var(--admin-accent);
-    color: white;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(5px);
 }
 
 .menu-item i {
-    margin-right: 0.75rem;
-    width: 20px;
-    text-align: center;
+    width: 24px;
+    font-size: 1.2rem;
+    margin-right: 15px;
 }
 
-/* Conteúdo principal */
+/* Conteúdo Principal */
 .admin-content {
     flex: 1;
-    margin-left: var(--admin-sidebar-width);
+    margin-left: 280px;
     padding: 2rem;
+    background: #f4f6f9;
 }
 
-/* Cards de Dashboard */
+/* Cards de Estatísticas */
 .dashboard-card {
     background: white;
-    border-radius: 10px;
+    border-radius: 15px;
     padding: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    border: none;
+    position: relative;
+    overflow: hidden;
 }
 
 .dashboard-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.dashboard-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--gradient);
 }
 
 .dashboard-card .icon {
-    font-size: 2rem;
+    font-size: 2.5rem;
     margin-bottom: 1rem;
+    background: var(--gradient);
+    -webkit-text-fill-color: transparent;
 }
 
 .dashboard-card .number {
     font-size: 2rem;
-    font-weight: bold;
+    font-weight: 700;
     margin-bottom: 0.5rem;
+    color: var(--dark);
 }
 
 .dashboard-card .label {
-    color: #666;
+    color: #6c757d;
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 /* Tabelas */
 .admin-table {
     background: white;
-    border-radius: 10px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.admin-table th {
-    background-color: var(--admin-primary);
-    color: white;
-    font-weight: 500;
+.admin-table thead th {
+    background: var(--light);
+    color: var(--dark);
+    font-weight: 600;
     padding: 1rem;
+    border: none;
 }
 
-.admin-table td {
+.admin-table tbody td {
     padding: 1rem;
     vertical-align: middle;
+    border-bottom: 1px solid #eee;
 }
 
 .admin-table tbody tr:hover {
-    background-color: rgba(0, 0, 0, 0.02);
-}
-
-/* Formulários */
-.admin-form {
-    background: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.admin-form label {
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.admin-form .form-control {
-    border: 2px solid #e9ecef;
-    border-radius: 5px;
-    padding: 0.75rem;
-}
-
-.admin-form .form-control:focus {
-    border-color: var(--admin-accent);
-    box-shadow: none;
+    background: #f8f9fa;
 }
 
 /* Botões */
 .btn-admin {
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .btn-admin-primary {
-    background-color: var(--admin-primary);
+    background: var(--gradient);
+    border: none;
     color: white;
 }
 
 .btn-admin-primary:hover {
-    background-color: var(--admin-secondary);
-    color: white;
-}
-
-.btn-admin-success {
-    background-color: var(--admin-success);
-    color: white;
-}
-
-.btn-admin-warning {
-    background-color: var(--admin-warning);
-    color: var(--admin-text);
-}
-
-.btn-admin-danger {
-    background-color: var(--admin-danger);
-    color: white;
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+    transform: translateY(-2px);
 }
 
 /* Badges */
 .badge-admin {
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
+    padding: 0.5em 1em;
+    border-radius: 30px;
     font-weight: 500;
+    font-size: 0.85rem;
 }
 
-.badge-success {
-    background-color: rgba(39, 174, 96, 0.1);
-    color: var(--admin-success);
+.badge-success { background: var(--success); color: white; }
+.badge-warning { background: var(--warning); color: white; }
+.badge-danger { background: var(--danger); color: white; }
+
+/* Modais */
+.modal-admin .modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
-.badge-warning {
-    background-color: rgba(241, 196, 15, 0.1);
-    color: var(--admin-warning);
-}
-
-.badge-danger {
-    background-color: rgba(231, 76, 60, 0.1);
-    color: var(--admin-danger);
-}
-
-/* Modal personalizado */
 .modal-admin .modal-header {
-    background-color: var(--admin-primary);
+    background: var(--gradient);
     color: white;
+    border-radius: 15px 15px 0 0;
+    border: none;
 }
 
-.modal-admin .modal-title {
-    font-weight: 500;
+.modal-admin .modal-footer {
+    border-top: 1px solid #eee;
+}
+
+/* Gráficos */
+.chart-container {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
 /* Animações */
-.fade-in {
-    animation: fadeIn 0.3s ease-in;
-}
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
+.fade-in {
+    animation: fadeIn 0.5s ease-out;
+}
+
 /* Responsividade */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .admin-sidebar {
         transform: translateX(-100%);
     }
-    
+
     .admin-sidebar.active {
         transform: translateX(0);
     }
-    
+
     .admin-content {
         margin-left: 0;
     }
-    
-    .toggle-sidebar {
-        display: block;
-        position: fixed;
-        top: 1rem;
-        left: 1rem;
-        z-index: 1001;
+
+    .dashboard-card .number {
+        font-size: 1.5rem;
     }
 }
 
-/* Loading Spinner */
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 5px solid var(--admin-accent);
-    animation: spin 1s linear infinite;
+/* Personalização de Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
-/* Tooltips personalizados */
-.tooltip-admin {
-    position: relative;
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 4px;
 }
 
-.tooltip-admin:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    background: var(--admin-primary);
-    color: white;
-    padding: 0.5rem;
-    border-radius: 5px;
-    font-size: 0.8rem;
-    z-index: 1000;
-    white-space: nowrap;
-}
-
-/* Customização de Select2 */
-.select2-container--admin .select2-selection {
-    border: 2px solid #e9ecef;
-    border-radius: 5px;
-    height: calc(1.5em + 1.5rem + 4px);
-}
-
-.select2-container--admin .select2-selection:focus {
-    border-color: var(--admin-accent);
-}
-
-/* Estados de alerta */
-.alert-admin {
-    padding: 1rem;
-    border-radius: 5px;
-    margin-bottom: 1rem;
-    border-left: 4px solid transparent;
-}
-
-.alert-admin-success {
-    background-color: rgba(39, 174, 96, 0.1);
-    border-left-color: var(--admin-success);
-}
-
-.alert-admin-warning {
-    background-color: rgba(241, 196, 15, 0.1);
-    border-left-color: var(--admin-warning);
-}
-
-.alert-admin-danger {
-    background-color: rgba(231, 76, 60, 0.1);
-    border-left-color: var(--admin-danger);
-}
-
-/* Editor de texto personalizado */
-.editor-admin {
-    border: 2px solid #e9ecef;
-    border-radius: 5px;
-    min-height: 200px;
-}
-
-.editor-admin:focus {
-    border-color: var(--admin-accent);
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
 }

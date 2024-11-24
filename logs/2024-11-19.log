@@ -1,0 +1,41 @@
+[2024-11-19 22:22:21] [::1] [Visitante] [erro]: Erro ao contar registros: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 22:22:21] [::1] [Visitante] [erro]: Erro ao buscar perguntas: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 22:22:34] [::1] [Visitante] [erro]: Erro ao contar registros: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 22:22:34] [::1] [Visitante] [erro]: Erro ao buscar perguntas: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 22:25:24] [::1] [Visitante] [erro]: Erro ao contar jogadores: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'j.email' in 'where clause'
+[2024-11-19 22:48:01] [::1] [Visitante] [erro]: Erro ao contar registros: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 22:48:01] [::1] [Visitante] [erro]: Erro ao buscar perguntas: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 22:48:12] [::1] [Visitante] [erro]: Erro ao contar registros: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 22:48:12] [::1] [Visitante] [erro]: Erro ao buscar perguntas: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 22:49:49] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 22:49:53] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 22:50:01] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 22:50:03] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 22:50:05] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 22:50:29] [::1] [Visitante] [sucesso]: Pergunta excluída com sucesso - Dados: {"id":16,"pergunta":"O que \u00e9 um algoritmo de ordena\u00e7\u00e3o?","categoria":"Algoritmos","total_partidas":0}
+[2024-11-19 22:50:29] [::1] [Visitante] [info]: Limpeza de backups antigos realizada
+[2024-11-19 22:50:35] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 22:53:06] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:05:14] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:05:17] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:05:21] [::1] [Visitante] [sucesso]: Pergunta excluída com sucesso - Dados: {"id":15,"pergunta":"Qual \u00e9 a complexidade de busca em um array n\u00e3o ordenado?","categoria":"Algoritmos","total_partidas":0}
+[2024-11-19 23:05:34] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:05:49] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:06:56] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:06:57] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:06:58] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:07:26] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:13:09] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:13:20] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:13:44] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:13:46] [::1] [Visitante] [erro]: Erro no banco de dados ao buscar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'data_partida' in 'field list'
+[2024-11-19 23:19:36] [::1] [Visitante] [erro]: Erro no banco de dados ao atualizar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'feedback' in 'field list'
+[2024-11-19 23:27:43] [::1] [Visitante] [erro]: Erro no banco de dados ao atualizar pergunta: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'feedback' in 'field list'
+[2024-11-19 23:34:37] [::1] [Visitante] [sucesso]: Pergunta excluída com sucesso - Dados: {"id":17,"pergunta":"Qual \u00e9 a complexidade do algoritmo QuickSort no caso m\u00e9dio?","categoria":"Algoritmos","total_partidas":0}
+[2024-11-19 23:34:46] [::1] [Visitante] [erro]: Erro ao contar registros: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 23:34:46] [::1] [Visitante] [erro]: Erro ao buscar perguntas: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 23:34:58] [::1] [Visitante] [erro]: Erro ao contar registros: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 23:34:58] [::1] [Visitante] [erro]: Erro ao buscar perguntas: SQLSTATE[HY093]: Invalid parameter number
+[2024-11-19 23:40:20] [::1] [Visitante] [sucesso]: Pergunta excluída com sucesso - Dados: {"id":27,"pergunta":"oooooooooooooooooooo","categoria":"Algoritmos","total_partidas":0}
+[2024-11-19 23:46:18] [::1] [Visitante] [sucesso]: Pergunta excluída com sucesso - Dados: {"id":28,"pergunta":"pppppppppppppppppppppppppppppppppppppp","categoria":"Algoritmos","total_partidas":0}
+[2024-11-19 23:47:18] [::1] [Visitante] [sucesso]: Pergunta excluída com sucesso - Dados: {"id":29,"pergunta":"12122222222222222222222","categoria":"Algoritmos","total_partidas":0}

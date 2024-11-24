@@ -4,19 +4,15 @@ require_once '../includes/config.php';
 require_once '../includes/conexao.php';
 require_once '../includes/funcoes.php';
 
+header('Content-Type: application/json');
+
 // Verificar se é uma requisição POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('HTTP/1.1 405 Method Not Allowed');
-    exit('Método não permitido');
-}
-
-// Verificar se o usuário está logado
-verificarLogin();
-
-// Verificar se é uma requisição AJAX
-if (!is_ajax()) {
-    header('HTTP/1.1 400 Bad Request');
-    exit('Requisição inválida');
+    echo json_encode([
+        'sucesso' => false,
+        'mensagem' => 'Método não permitido'
+    ]);
+    exit;
 }
 
 // Iniciar resposta
@@ -42,57 +38,46 @@ try {
     }
 
     // Validar dados obrigatórios
-    $campos_obrigatorios = ['pergunta', 'categoria', 'dificuldade', 'opcoes', 'resposta_correta'];
-    foreach ($campos_obrigatorios as $campo) {
-        if (!isset($_POST[$campo]) || empty($_POST[$campo])) {
-            throw new Exception("O campo {$campo} é obrigatório.");
-        }
+    if (empty($_POST['pergunta'])) {
+        throw new Exception('A pergunta é obrigatória.');
+    }
+    if (empty($_POST['categoria'])) {
+        throw new Exception('A categoria é obrigatória.');
+    }
+    if (empty($_POST['dificuldade'])) {
+        throw new Exception('A dificuldade é obrigatória.');
+    }
+    if (!isset($_POST['opcoes']) || !is_array($_POST['opcoes']) || count($_POST['opcoes']) < 2) {
+        throw new Exception('São necessárias pelo menos 2 opções de resposta.');
+    }
+    if (!isset($_POST['resposta_correta']) || !is_numeric($_POST['resposta_correta'])) {
+        throw new Exception('É necessário indicar a resposta correta.');
     }
 
     // Limpar e validar dados
-    $pergunta = limparDados($_POST['pergunta']);
-    $categoria = limparDados($_POST['categoria']);
-    $dificuldade = limparDados($_POST['dificuldade']);
+    $pergunta = trim($_POST['pergunta']);
+    $categoria = trim($_POST['categoria']);
+    $dificuldade = trim($_POST['dificuldade']);
     $pontos = isset($_POST['pontos']) ? (int)$_POST['pontos'] : 10;
-    $feedback = isset($_POST['feedback']) ? limparDados($_POST['feedback']) : null;
-    
-    // Validar tamanho da pergunta
+    $resposta_correta = (int)$_POST['resposta_correta'];
+    $opcoes = array_map('trim', $_POST['opcoes']);
+
+    // Validações adicionais
     if (strlen($pergunta) < 10) {
         throw new Exception('A pergunta deve ter no mínimo 10 caracteres.');
     }
 
-    // Validar dificuldade
-    if (!array_key_exists($dificuldade, DIFICULDADES)) {
+    if (!in_array($dificuldade, ['facil', 'medio', 'dificil'])) {
         throw new Exception('Dificuldade inválida.');
     }
 
-    // Validar pontos
     if ($pontos < 1 || $pontos > 100) {
         throw new Exception('A pontuação deve estar entre 1 e 100.');
-    }
-
-    // Validar opções
-    $opcoes = $_POST['opcoes'];
-    $resposta_correta = (int)$_POST['resposta_correta'];
-
-    if (count($opcoes) < 2) {
-        throw new Exception('É necessário pelo menos 2 opções de resposta.');
     }
 
     if ($resposta_correta >= count($opcoes)) {
         throw new Exception('Resposta correta inválida.');
     }
-
-    // Registrar estado anterior para log
-    $stmt = $conexao->prepare("
-        SELECT p.*, GROUP_CONCAT(r.resposta) as respostas
-        FROM perguntas p
-        LEFT JOIN respostas r ON p.id = r.pergunta_id
-        WHERE p.id = :id
-        GROUP BY p.id
-    ");
-    $stmt->execute([':id' => $id]);
-    $estado_anterior = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Iniciar transação
     $conexao->beginTransaction();
@@ -103,8 +88,7 @@ try {
         SET pergunta = :pergunta,
             categoria = :categoria,
             dificuldade = :dificuldade,
-            pontos = :pontos,
-            feedback = :feedback
+            pontos = :pontos
         WHERE id = :id
     ");
 
@@ -113,8 +97,7 @@ try {
         ':pergunta' => $pergunta,
         ':categoria' => $categoria,
         ':dificuldade' => $dificuldade,
-        ':pontos' => $pontos,
-        ':feedback' => $feedback
+        ':pontos' => $pontos
     ]);
 
     // Excluir respostas antigas
@@ -128,7 +111,6 @@ try {
     ");
 
     foreach ($opcoes as $index => $opcao) {
-        $opcao = limparDados($opcao);
         if (empty($opcao)) {
             throw new Exception('Todas as opções devem ser preenchidas.');
         }
@@ -143,25 +125,7 @@ try {
     // Commit da transação
     $conexao->commit();
 
-    // Registrar log com as alterações
-    $alteracoes = [
-        'id' => $id,
-        'alteracoes' => array_diff_assoc([
-            'pergunta' => $pergunta,
-            'categoria' => $categoria,
-            'dificuldade' => $dificuldade,
-            'pontos' => $pontos
-        ], [
-            'pergunta' => $estado_anterior['pergunta'],
-            'categoria' => $estado_anterior['categoria'],
-            'dificuldade' => $estado_anterior['dificuldade'],
-            'pontos' => $estado_anterior['pontos']
-        ])
-    ];
-
-    registrar_log('sucesso', 'Pergunta atualizada com sucesso', $alteracoes);
-
-    // Preparar resposta de sucesso
+    // Retornar sucesso
     $resposta = [
         'sucesso' => true,
         'mensagem' => 'Pergunta atualizada com sucesso!',
@@ -169,18 +133,22 @@ try {
     ];
 
 } catch (PDOException $e) {
-    $conexao->rollBack();
-    registrar_log('erro', 'Erro no banco de dados ao atualizar pergunta: ' . $e->getMessage());
+    // Rollback em caso de erro
+    if ($conexao->inTransaction()) {
+        $conexao->rollBack();
+    }
+    
+    error_log('Erro PDO ao editar pergunta: ' . $e->getMessage());
     $resposta['mensagem'] = 'Erro ao atualizar a pergunta. Por favor, tente novamente.';
     
 } catch (Exception $e) {
-    if (isset($conexao) && $conexao->inTransaction()) {
+    // Rollback em caso de erro
+    if ($conexao->inTransaction()) {
         $conexao->rollBack();
     }
-    $resposta['mensagem'] = $e->getMessage();
     
-} finally {
-    // Enviar resposta como JSON
-    header('Content-Type: application/json');
-    echo json_encode($resposta);
+    $resposta['mensagem'] = $e->getMessage();
 }
+
+// Enviar resposta
+echo json_encode($resposta);

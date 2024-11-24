@@ -6,7 +6,6 @@ require_once 'includes/funcoes.php';
 
 header('Content-Type: application/json');
 
-// Verificar se o usuário está logado
 if (!isset($_SESSION['jogador_id'])) {
     http_response_code(401);
     echo json_encode(['sucesso' => false, 'mensagem' => 'Sessão expirada']);
@@ -16,57 +15,74 @@ if (!isset($_SESSION['jogador_id'])) {
 try {
     $dados = json_decode(file_get_contents('php://input'), true);
     
-    // Validar dados recebidos
     if (!isset($dados['partida_id']) || !isset($dados['pergunta_id']) || 
         !isset($dados['resposta_id']) || !isset($dados['tempo_resposta'])) {
-        throw new Exception('Dados incompletos');
+        throw new Exception('Dados incompletos para registrar resposta');
     }
 
     $conexao->beginTransaction();
 
-    // Registrar resposta
-    $stmt = $conexao->prepare("
-        INSERT INTO respostas_jogador 
-        (partida_id, jogador_id, pergunta_id, resposta_id, tempo_resposta, data_resposta)
-        VALUES 
-        (:partida_id, :jogador_id, :pergunta_id, :resposta_id, :tempo_resposta, CURRENT_TIMESTAMP)
-    ");
-
-    $stmt->execute([
-        ':partida_id' => $dados['partida_id'],
-        ':jogador_id' => $_SESSION['jogador_id'],
-        ':pergunta_id' => $dados['pergunta_id'],
-        ':resposta_id' => $dados['resposta_id'],
-        ':tempo_resposta' => $dados['tempo_resposta']
-    ]);
-
     // Verificar se a resposta está correta
     $stmt = $conexao->prepare("
-        SELECT correta, pontos 
-        FROM respostas 
-        WHERE id = :resposta_id AND pergunta_id = :pergunta_id
+        SELECT r.correta, p.pontos 
+        FROM respostas r
+        JOIN perguntas p ON r.pergunta_id = p.id
+        WHERE r.id = ? AND r.pergunta_id = ?
     ");
 
     $stmt->execute([
-        ':resposta_id' => $dados['resposta_id'],
-        ':pergunta_id' => $dados['pergunta_id']
+        $dados['resposta_id'],
+        $dados['pergunta_id']
     ]);
 
     $resposta = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+    if (!$resposta) {
+        throw new Exception('Resposta não encontrada');
+    }
+
+    // Converter para booleano
+    $esta_correta = (bool)$resposta['correta'];
+    $pontos = $esta_correta ? (int)$resposta['pontos'] : 0;
+
+    // Registrar a resposta
+    $stmt = $conexao->prepare("
+        INSERT INTO respostas_jogador 
+        (partida_id, jogador_id, pergunta_id, resposta_id, tempo_resposta, correta)
+        VALUES 
+        (?, ?, ?, ?, ?, ?)
+    ");
+
+    $stmt->execute([
+        $dados['partida_id'],
+        $_SESSION['jogador_id'],
+        $dados['pergunta_id'],
+        $dados['resposta_id'],
+        $dados['tempo_resposta'],
+        $esta_correta
+    ]);
+
     $conexao->commit();
 
-    echo json_encode([
+    // Preparar resposta
+    $resposta_json = [
         'sucesso' => true,
-        'correta' => $resposta['correta'] == 1,
-        'pontos' => (int)$resposta['pontos']
-    ]);
+        'correta' => $esta_correta,
+        'pontos' => $pontos
+    ];
+
+    // Adicionar feedback apropriado
+    if ($esta_correta) {
+        $resposta_json['feedback'] = 'Resposta correta! Muito bem!';
+    } else {
+        $resposta_json['feedback'] = 'Resposta incorreta. Tente novamente!';
+    }
+
+    echo json_encode($resposta_json);
 
 } catch (Exception $e) {
     if ($conexao->inTransaction()) {
         $conexao->rollBack();
     }
-    
     error_log("Erro ao registrar resposta: " . $e->getMessage());
     http_response_code(400);
     echo json_encode([

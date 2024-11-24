@@ -21,8 +21,12 @@ require_once 'config.php';
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/estilo.css">
     <?php if(isset($pagina_admin) && $pagina_admin): ?>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/admin.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>../assets/css/admin-animations.css">
+    <link rel="stylesheet" href="<?php echo BASE_URL; ?>../assets/css/admin.css">
+
+   
     <?php endif; ?>
+ 
 </head>
 <body>
     <!-- Navbar -->

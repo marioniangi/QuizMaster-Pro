@@ -120,45 +120,52 @@ function salvar_partida($jogador_id, $pontuacao, $acertos, $total_perguntas) {
     global $conexao;
     
     try {
-        // Verificar se o jogador já existe
+        // Limpar e validar o nome
+        $nome = trim(strip_tags($nome));
+        if (strlen($nome) < 3 || strlen($nome) > 50) {
+            throw new Exception("Nome deve ter entre 3 e 50 caracteres");
+        }
+
+        // Verificar se o nome já existe
         $stmt = $conexao->prepare("
             SELECT id 
             FROM jogadores 
-            WHERE nome = :nome
+            WHERE nome = ? 
+            AND status = 'ativo'
+            LIMIT 1
         ");
+        $stmt->execute([$nome]);
         
-        $stmt->execute([':nome' => $nome]);
-        $jogador = $stmt->fetch();
-        
-        if ($jogador) {
-            return $jogador['id'];
+        if ($stmt->fetch()) {
+            throw new Exception("Este nome já está em uso");
         }
-        
-        // Criar novo jogador
+
+        // Inserir novo jogador
         $stmt = $conexao->prepare("
-            INSERT INTO jogadores (
-                nome,
-                data_cadastro,
-                pontuacao_total,
-                jogos_completados,
-                status
-            ) VALUES (
-                :nome,
-                NOW(),
-                0,
-                0,
-                'ativo'
-            )
+            INSERT INTO jogadores 
+            (nome, data_cadastro) 
+            VALUES 
+            (?, CURRENT_TIMESTAMP)
         ");
-        
-        $stmt->execute([':nome' => $nome]);
-        return $conexao->lastInsertId();
-        
-    } catch (PDOException $e) {
+
+        $stmt->execute([$nome]);
+        $id = $conexao->lastInsertId();
+
+        if (!$id) {
+            throw new Exception("Erro ao criar jogador");
+        }
+
+        registrar_log('info', "Novo jogador criado: ID $id, Nome: $nome");
+        return $id;
+
+    } catch (Exception $e) {
         registrar_log('erro', 'Erro ao criar jogador: ' . $e->getMessage());
-        return false;
+        throw $e;
     }
 }
+
+
+
 
 function buscar_ranking($limite = 10) {
     global $conexao;
@@ -321,5 +328,51 @@ function get_estatisticas_gerais() {
         return false;
     }
 }
+
+// Função para buscar categorias
+function buscarCategorias() {
+    global $conexao;
+    
+    try {
+        $stmt = $conexao->query("
+            SELECT DISTINCT categoria 
+            FROM perguntas 
+            ORDER BY categoria
+        ");
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    } catch (Exception $e) {
+        error_log("Erro ao buscar categorias: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Função para validar pergunta
+function validarPergunta($dados) {
+    $erros = [];
+    
+    if (empty($dados['pergunta']) || strlen($dados['pergunta']) < 10) {
+        $erros[] = "A pergunta deve ter no mínimo 10 caracteres.";
+    }
+    
+    if (empty($dados['categoria'])) {
+        $erros[] = "Categoria é obrigatória.";
+    }
+    
+    if (!in_array($dados['dificuldade'], ['facil', 'medio', 'dificil'])) {
+        $erros[] = "Dificuldade inválida.";
+    }
+    
+    if (empty($dados['opcoes']) || count($dados['opcoes']) < 2) {
+        $erros[] = "É necessário pelo menos 2 opções de resposta.";
+    }
+    
+    if (!isset($dados['resposta_correta']) || 
+        !isset($dados['opcoes'][$dados['resposta_correta']])) {
+        $erros[] = "É necessário indicar a resposta correta.";
+    }
+    
+    return $erros;
+}
+
 
 ?>

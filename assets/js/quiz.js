@@ -1,201 +1,39 @@
 class Quiz {
-    constructor(modo) {
-        this.modo = modo;
-        this.perguntas = [];
-        this.perguntaAtual = 0;
+    constructor(config) {
+        this.config = config;
         this.pontuacao = 0;
         this.acertos = 0;
-        this.temporizador = null;
-        this.tempoRestante = modo === 'tempo' ? 30 : null;
+        this.perguntaAtual = 0;
+        this.totalPerguntas = 0;
+        this.tempoInicio = null;
+        this.timerInterval = null;
+        this.perguntas = [];
+        this.partida_id = null;
+        this.tempoRestante = config.tempoLimite;
         
         // Elementos do DOM
         this.containerQuiz = document.getElementById('quiz-container');
         this.containerPergunta = document.getElementById('pergunta-container');
         this.containerOpcoes = document.getElementById('opcoes-container');
-        this.containerPontuacao = document.getElementById('pontuacao');
-        this.containerTempo = document.getElementById('tempo-container');
         this.btnProxima = document.getElementById('btn-proxima');
-
-        if (this.btnProxima) {
-            this.btnProxima.addEventListener('click', () => this.proximaPergunta());
-        }
+        this.spanPontuacao = document.getElementById('pontuacao');
+        this.spanContador = document.getElementById('contador-perguntas');
+        this.containerResultados = document.getElementById('resultados-container');
+        
+        // Inicializar
+        this.iniciarQuiz();
     }
 
     async iniciarQuiz() {
         try {
-            const telaInicial = document.getElementById('tela-inicial');
-            if (telaInicial) {
-                telaInicial.classList.add('d-none');
-            }
-
-            this.containerQuiz.classList.remove('d-none');
-            if (this.modo === 'tempo') {
-                this.containerTempo.classList.remove('d-none');
-            }
-
-            const response = await fetch('carregar_perguntas.php', {
+            console.log('Iniciando quiz...');
+            const response = await fetch('criar_partida.php', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 
-                    modo: this.modo,
-                    jogador_id: QUIZ_CONFIG.jogadorId
-                })
-            });
-
-            const data = await response.json();
-            
-            if (!data.sucesso) {
-                throw new Error(data.mensagem || 'Erro ao carregar perguntas');
-            }
-
-            this.perguntas = data.perguntas;
-            this.partida_id = data.partida_id;
-            this.carregarPergunta();
-
-        } catch (erro) {
-            console.error('Erro ao iniciar quiz:', erro);
-            Swal.fire({
-                icon: 'error',
-                title: 'Erro ao iniciar o quiz',
-                text: erro.message || 'Tente novamente mais tarde.'
-            });
-        }
-    }
-
-    carregarPergunta() {
-        if (this.perguntaAtual >= this.perguntas.length) {
-            this.finalizarQuiz();
-            return;
-        }
-
-        const pergunta = this.perguntas[this.perguntaAtual];
-
-        // Atualizar contador
-        document.getElementById('contador-perguntas').textContent = 
-            `Pergunta ${this.perguntaAtual + 1} de ${this.perguntas.length}`;
-
-        // Mostrar pergunta
-        this.containerPergunta.innerHTML = `<h4>${pergunta.pergunta}</h4>`;
-
-        // Mostrar opções
-        this.containerOpcoes.innerHTML = pergunta.opcoes.map((opcao, index) => `
-            <div class="opcao-resposta mb-3" onclick="quiz.verificarResposta(${index})">
-                ${opcao.texto}
-            </div>
-        `).join('');
-
-        // Desabilitar botão próxima
-        if (this.btnProxima) {
-            this.btnProxima.disabled = true;
-        }
-
-        // Iniciar temporizador no modo tempo
-        if (this.modo === 'tempo') {
-            this.pararTemporizador();
-            this.tempoRestante = 30;
-            this.iniciarTemporizador();
-        }
-    }
-
-    verificarResposta(index) {
-        this.pararTemporizador();
-
-        const pergunta = this.perguntas[this.perguntaAtual];
-        const opcoes = this.containerOpcoes.querySelectorAll('.opcao-resposta');
-        
-        const respostaCorreta = pergunta.opcoes.findIndex(opcao => opcao.correta);
-
-        // Desabilitar todas as opções
-        opcoes.forEach(opcao => {
-            opcao.style.pointerEvents = 'none';
-        });
-
-        // Marcar resposta correta e incorreta
-        opcoes[respostaCorreta].classList.add('correta');
-        if (index !== respostaCorreta) {
-            opcoes[index].classList.add('incorreta');
-        }
-
-        // Calcular pontuação
-        if (index === respostaCorreta) {
-            this.acertos++;
-            let pontos = pergunta.pontos;
-            
-            // Bônus por tempo no modo tempo
-            if (this.modo === 'tempo' && this.tempoRestante > 0) {
-                const bonus = Math.floor(this.tempoRestante / 2);
-                pontos += bonus;
-            }
-            
-            this.pontuacao += pontos;
-            this.containerPontuacao.textContent = this.pontuacao;
-        }
-
-        // Registrar resposta
-        this.registrarResposta(index === respostaCorreta);
-
-        // Habilitar botão próxima
-        if (this.btnProxima) {
-            this.btnProxima.disabled = false;
-            if (this.perguntaAtual === this.perguntas.length - 1) {
-                this.btnProxima.textContent = 'Finalizar Quiz';
-            }
-        }
-
-        // Mostrar feedback
-        Swal.fire({
-            icon: index === respostaCorreta ? 'success' : 'error',
-            title: index === respostaCorreta ? 'Correto!' : 'Incorreto!',
-            text: this.modo === 'tempo' && index === respostaCorreta ? 
-                  `+${Math.floor(this.tempoRestante / 2)} pontos bônus por rapidez!` : '',
-            timer: 1500,
-            showConfirmButton: false
-        });
-    }
-
-    async registrarResposta(correta) {
-        try {
-            await fetch('registrar_resposta.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    partida_id: this.partida_id,
-                    pergunta_id: this.perguntas[this.perguntaAtual].id,
-                    correta: correta,
-                    tempo: this.modo === 'tempo' ? this.tempoRestante : null
-                })
-            });
-        } catch (erro) {
-            console.error('Erro ao registrar resposta:', erro);
-        }
-    }
-
-    async finalizarQuiz() {
-        this.pararTemporizador();
-        
-        try {
-            console.log('Salvando resultado...', {
-                modo: this.modo,
-                pontuacao: this.pontuacao,
-                acertos: this.acertos,
-                total_perguntas: this.perguntas.length
-            });
-
-            const response = await fetch('salvar_resultado.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    partida_id: this.partida_id,
-                    modo: this.modo,
-                    pontuacao: this.pontuacao,
-                    acertos: this.acertos,
-                    total_perguntas: this.perguntas.length
+                    modo: this.config.modo
                 })
             });
 
@@ -203,110 +41,261 @@ class Quiz {
             console.log('Resposta do servidor:', data);
 
             if (!data.sucesso) {
-                throw new Error(data.mensagem || 'Erro ao salvar resultado');
+                throw new Error(data.mensagem);
             }
 
-            const percentualAcertos = (this.acertos / this.perguntas.length) * 100;
+            this.partida_id = data.partida_id;
+            this.perguntas = data.perguntas;
+            this.totalPerguntas = this.perguntas.length;
+            this.tempoInicio = new Date();
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Quiz Finalizado!',
-                html: `
-                    <div class="text-center">
-                        <h4 class="mb-3">Resultado Final</h4>
-                        <p class="mb-2">Acertos: ${this.acertos} de ${this.perguntas.length} (${percentualAcertos.toFixed(1)}%)</p>
-                        <h3 class="mb-3">${this.pontuacao} pontos</h3>
-                        ${this.modo === 'tempo' ? '<p><small>Incluindo bônus por rapidez!</small></p>' : ''}
-                        ${data.ranking ? `<p class="mt-3">Sua posição no ranking: ${data.ranking}º lugar</p>` : ''}
-                    </div>
-                `,
-                confirmButtonText: 'Jogar Novamente',
-                showCancelButton: true,
-                cancelButtonText: 'Ver Ranking'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.reload();
-                } else {
-                    window.location.href = 'ranking.php';
-                }
+            console.log('Partida iniciada:', {
+                partida_id: this.partida_id,
+                total_perguntas: this.totalPerguntas,
+                modo: this.config.modo
             });
 
-        } catch (erro) {
-            console.error('Erro ao finalizar quiz:', erro);
+            this.carregarPergunta();
+        } catch (error) {
+            console.error('Erro ao iniciar quiz:', error);
+            this.mostrarErro('Erro ao iniciar quiz: ' + error.message);
+        }
+    }
+
+    async carregarPergunta() {
+        if (this.perguntaAtual >= this.totalPerguntas) {
+            await this.finalizarQuiz();
+            return;
+        }
+
+        const pergunta = this.perguntas[this.perguntaAtual];
+        
+        // Atualizar contador
+        if (this.spanContador) {
+            this.spanContador.textContent = `Pergunta ${this.perguntaAtual + 1} de ${this.totalPerguntas}`;
+        }
+
+        // Carregar pergunta
+        this.containerPergunta.innerHTML = `
+            <h4 class="mb-4">${pergunta.texto}</h4>
+        `;
+
+        // Carregar opções
+        let opcoesHTML = '';
+        pergunta.respostas.forEach((resposta, index) => {
+            opcoesHTML += `
+                <div class="opcao-resposta" data-id="${resposta.id}" ${resposta.correta ? 'data-correta="true"' : ''} 
+                     onclick="window.quiz.verificarResposta(this)">
+                    <span class="opcao-letra">${String.fromCharCode(65 + index)}</span>
+                    ${resposta.texto}
+                </div>
+            `;
+        });
+        this.containerOpcoes.innerHTML = opcoesHTML;
+
+        // Resetar estado
+        this.aguardandoProxima = false;
+        this.btnProxima.disabled = true;
+    }
+
+    async registrarResposta(perguntaId, respostaId, tempoResposta) {
+        if (!this.partida_id) {
+            console.error('Partida ID não encontrado:', this.partida_id);
+            throw new Error('Partida não inicializada corretamente');
+        }
+
+        try {
+            console.log('Registrando resposta:', {
+                partida_id: this.partida_id,
+                pergunta_id: perguntaId,
+                resposta_id: respostaId,
+                tempo_resposta: tempoResposta
+            });
+
+            const response = await fetch('registrar_resposta.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    partida_id: this.partida_id,
+                    pergunta_id: perguntaId,
+                    resposta_id: respostaId,
+                    tempo_resposta: tempoResposta
+                })
+            });
+
+            const data = await response.json();
+            console.log('Resposta do servidor:', data);
+
+            if (!data.sucesso) {
+                throw new Error(data.mensagem);
+            }
+
+            return data;
+        } catch (error) {
+            console.error('Erro ao registrar resposta:', error);
+            throw error;
+        }
+    }
+
+    async verificarResposta(opcaoElement) {
+        if (this.aguardandoProxima) return;
+    
+        const respostaId = opcaoElement.dataset.id;
+        const perguntaId = this.perguntas[this.perguntaAtual].id;
+        const tempoResposta = this.calcularTempoResposta();
+    
+        try {
+            const resultado = await this.registrarResposta(perguntaId, respostaId, tempoResposta);
+            
+            if (resultado.correta) {
+                this.acertos++;
+                this.pontuacao += resultado.pontos;
+                this.atualizarPontuacao();
+                opcaoElement.classList.add('correta');
+                // Mostrar feedback positivo
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Muito bem!',
+                    text: resultado.feedback,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } else {
+                opcaoElement.classList.add('incorreta');
+                // Mostrar resposta correta
+                const opcaoCorreta = document.querySelector(`[data-correta="true"]`);
+                if (opcaoCorreta) {
+                    opcaoCorreta.classList.add('correta');
+                }
+                // Mostrar feedback negativo
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ops!',
+                    text: resultado.feedback,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
+    
+            // Desabilitar outras opções
+            const opcoes = document.querySelectorAll('.opcao-resposta');
+            opcoes.forEach(opcao => opcao.style.pointerEvents = 'none');
+    
+            this.aguardandoProxima = true;
+            this.btnProxima.disabled = false;
+    
+        } catch (error) {
+            console.error('Erro ao verificar resposta:', error);
             Swal.fire({
                 icon: 'error',
-                title: 'Erro ao salvar resultado',
-                text: erro.message || 'Ocorreu um erro ao salvar seu resultado.',
-                confirmButtonText: 'OK'
-            }).then(() => {
-                window.location.href = 'index.php';
+                title: 'Erro!',
+                text: 'Ocorreu um erro ao verificar a resposta'
             });
         }
+    }
+
+    async finalizarQuiz() {
+        const dadosFinais = {
+            modo: this.config.modo,
+            pontuacao: this.pontuacao,
+            acertos: this.acertos,
+            total_perguntas: this.totalPerguntas,
+            tempo_total: Math.floor((new Date() - this.tempoInicio) / 1000)
+        };
+    
+        console.log('Salvando resultado...', dadosFinais);
+    
+        try {
+            const response = await fetch('salvar_resultado.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dadosFinais)
+            });
+    
+            const data = await response.json();
+            console.log('Resposta do servidor:', data);
+    
+            // Mostrar resultado final
+            const containerResultados = document.getElementById('resultados-container');
+            containerResultados.classList.remove('d-none');
+            
+            let mensagem = `
+                <div class="text-center mb-4">
+                    <i class="fas fa-trophy fa-3x text-warning mb-3"></i>
+                    <h2>Quiz Finalizado!</h2>
+                    <p class="lead">Você acertou ${this.acertos} de ${this.totalPerguntas} perguntas</p>
+                    <h3 class="my-3">Pontuação: ${this.pontuacao} pontos</h3>
+                    <p>Tempo total: ${formatarTempo(dadosFinais.tempo_total)}</p>
+                </div>
+                <div class="text-center mt-4">
+                    <button onclick="window.location.reload()" class="btn btn-primary me-2">
+                        <i class="fas fa-redo me-2"></i>Jogar Novamente
+                    </button>
+                    <a href="index.php" class="btn btn-secondary">
+                        <i class="fas fa-home me-2"></i>Voltar ao Início
+                    </a>
+                </div>
+            `;
+            
+            containerResultados.innerHTML = mensagem;
+            document.getElementById('quiz-container').classList.add('d-none');
+    
+        } catch (error) {
+            console.error('Erro ao finalizar quiz:', error);
+            alert('Erro ao salvar resultado: ' + error.message);
+        }
+    }
+
+    calcularTempoResposta() {
+        return Math.floor((new Date() - this.tempoInicio) / 1000);
+    }
+
+    atualizarPontuacao() {
+        if (this.spanPontuacao) {
+            this.spanPontuacao.textContent = this.pontuacao;
+        }
+    }
+
+    mostrarErro(mensagem) {
+        console.error(mensagem);
+        Swal.fire({
+            icon: 'error',
+            title: 'Ops! Ocorreu um erro',
+            text: mensagem,
+            confirmButtonText: 'Tentar Novamente'
+        }).then(() => {
+            location.reload();
+        });
     }
 
     proximaPergunta() {
         this.perguntaAtual++;
         this.carregarPergunta();
     }
-
-    pararTemporizador() {
-        if (this.temporizador) {
-            clearInterval(this.temporizador);
-            this.temporizador = null;
-        }
-    }
-
-    iniciarTemporizador() {
-        if (this.modo !== 'tempo') return;
-
-        this.atualizarBarraTempo();
-        this.temporizador = setInterval(() => {
-            this.tempoRestante--;
-            this.atualizarBarraTempo();
-
-            if (this.tempoRestante <= 0) {
-                this.pararTemporizador();
-                const opcoes = this.containerOpcoes.querySelectorAll('.opcao-resposta');
-                if (opcoes.length > 0) {
-                    this.verificarResposta(0);
-                }
-            }
-        }, 1000);
-    }
-
-    atualizarBarraTempo() {
-        if (!this.containerTempo) return;
-        
-        const porcentagem = (this.tempoRestante / 30) * 100;
-        let corBarra = 'bg-success';
-        
-        if (porcentagem <= 25) {
-            corBarra = 'bg-danger';
-        } else if (porcentagem <= 50) {
-            corBarra = 'bg-warning';
-        }
-
-        this.containerTempo.innerHTML = `
-            <div class="progress" style="height: 20px;">
-                <div class="progress-bar ${corBarra}" 
-                     role="progressbar" 
-                     style="width: ${porcentagem}%"
-                     aria-valuenow="${this.tempoRestante}"
-                     aria-valuemin="0"
-                     aria-valuemax="30">
-                    ${this.tempoRestante}s
-                </div>
-            </div>
-        `;
-    }
 }
 
 // Inicialização
 document.addEventListener('DOMContentLoaded', () => {
-    window.quiz = new Quiz(QUIZ_CONFIG.modo);
-    
     const btnIniciar = document.getElementById('btn-iniciar');
     if (btnIniciar) {
-        btnIniciar.addEventListener('click', () => quiz.iniciarQuiz());
+        btnIniciar.addEventListener('click', () => {
+            document.getElementById('tela-inicial').classList.add('d-none');
+            document.getElementById('quiz-container').classList.remove('d-none');
+            window.quiz = new Quiz(QUIZ_CONFIG);
+        });
+    }
+
+    // Adicionar listener para o botão próxima
+    const btnProxima = document.getElementById('btn-proxima');
+    if (btnProxima) {
+        btnProxima.addEventListener('click', () => {
+            if (window.quiz) {
+                window.quiz.proximaPergunta();
+            }
+        });
     }
 });

@@ -318,3 +318,148 @@ document.addEventListener('DOMContentLoaded', () => {
         adminPanel.initDashboardCharts();
     }
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+    initializeQuestionForm();
+});
+
+function initializeQuestionForm() {
+    const optionsContainer = document.getElementById('optionsContainer');
+    const addOptionBtn = document.getElementById('addOptionBtn');
+    const addPerguntaModal = document.getElementById('addPerguntaModal');
+
+    // Adicionar opções iniciais quando o modal é aberto
+    if (addPerguntaModal) {
+        addPerguntaModal.addEventListener('show.bs.modal', function() {
+            if (optionsContainer) {
+                optionsContainer.innerHTML = ''; // Limpar opções existentes
+                // Adicionar 4 opções iniciais
+                for (let i = 0; i < 4; i++) {
+                    addNewOption();
+                }
+            }
+        });
+    }
+
+    // Adicionar evento ao botão de adicionar opção
+    if (addOptionBtn) {
+        addOptionBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            addNewOption();
+        });
+    }
+
+    // Inicializar o formulário
+    const form = document.getElementById('formAddPergunta');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+    }
+}
+
+function addNewOption() {
+    const optionsContainer = document.getElementById('optionsContainer');
+    if (!optionsContainer) return;
+
+    const optionCount = optionsContainer.children.length;
+    const optionDiv = document.createElement('div');
+    optionDiv.className = 'mb-3 option-container';
+
+    optionDiv.innerHTML = `
+        <div class="input-group">
+            <div class="input-group-text">
+                <input type="radio" name="resposta_correta" value="${optionCount}"
+                    ${optionCount === 0 ? 'checked' : ''} required>
+            </div>
+            <input type="text" class="form-control" name="opcoes[]" 
+                placeholder="Opção ${optionCount + 1}" required>
+            ${optionCount > 3 ? `
+                <button type="button" class="btn btn-danger btn-remove-option">
+                    <i class="fas fa-times"></i>
+                </button>
+            ` : ''}
+        </div>
+    `;
+
+    optionsContainer.appendChild(optionDiv);
+
+    // Adicionar evento para remover opção
+    const removeBtn = optionDiv.querySelector('.btn-remove-option');
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function() {
+            optionDiv.remove();
+            updateOptionsNumbering();
+        });
+    }
+}
+
+function updateOptionsNumbering() {
+    const optionsContainer = document.getElementById('optionsContainer');
+    if (!optionsContainer) return;
+
+    const options = optionsContainer.getElementsByClassName('option-container');
+    Array.from(options).forEach((option, index) => {
+        const radio = option.querySelector('input[type="radio"]');
+        const input = option.querySelector('input[type="text"]');
+        
+        radio.value = index;
+        input.placeholder = `Opção ${index + 1}`;
+    });
+}
+
+async function handleFormSubmit(e) {
+    e.preventDefault();
+
+    if (!this.checkValidity()) {
+        e.stopPropagation();
+        this.classList.add('was-validated');
+        return;
+    }
+
+    try {
+        const formData = new FormData(this);
+        const response = await fetch(this.action, {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.sucesso) {
+            await Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: result.mensagem,
+                timer: 1500,
+                showConfirmButton: false
+            });
+            window.location.reload();
+        } else {
+            throw new Error(result.mensagem);
+        }
+    } catch (error) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Erro!',
+            text: error.message || 'Erro ao salvar a pergunta'
+        });
+    }
+}
+
+// Manipulação da categoria
+document.addEventListener('DOMContentLoaded', function() {
+    const categoriaSelect = document.getElementById('categoria');
+    if (categoriaSelect) {
+        categoriaSelect.addEventListener('change', function() {
+            const novaCategoriaContainer = document.getElementById('novaCategoriaContainer');
+            const novaCategoriaInput = novaCategoriaContainer?.querySelector('input');
+            
+            if (this.value === 'nova') {
+                novaCategoriaContainer?.classList.remove('d-none');
+                if (novaCategoriaInput) novaCategoriaInput.required = true;
+            } else {
+                novaCategoriaContainer?.classList.add('d-none');
+                if (novaCategoriaInput) novaCategoriaInput.required = false;
+            }
+        });
+    }
+});

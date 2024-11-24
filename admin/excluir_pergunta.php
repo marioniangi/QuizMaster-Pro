@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Verificar se o usuário está logado
-verificarLogin();
+//verificarLogin();
 
 // Verificar se é uma requisição AJAX
 if (!is_ajax()) {

@@ -8,11 +8,20 @@ require_once '../includes/conexao.php';
 require_once '../includes/funcoes.php';
 
 // Verificar se o usuário está logado
-verificarLogin();
+
+
+// Definir constantes
+if (!defined('DIFICULDADES')) {
+    define('DIFICULDADES', [
+        'facil' => 'Fácil',
+        'medio' => 'Médio',
+        'dificil' => 'Difícil'
+    ]);
+}
 
 // Configurações de paginação
 $itens_por_pagina = 10;
-$pagina_atual = isset($_GET['pagina']) ? (int)$_GET['pagina'] : 1;
+$pagina_atual = isset($_GET['pagina']) ? max(1, (int)$_GET['pagina']) : 1;
 $offset = ($pagina_atual - 1) * $itens_por_pagina;
 
 // Filtros
@@ -21,14 +30,31 @@ $dificuldade = isset($_GET['dificuldade']) ? limparDados($_GET['dificuldade']) :
 $busca = isset($_GET['busca']) ? limparDados($_GET['busca']) : '';
 
 // Construir query base
-$query = "SELECT p.*, 
-          GROUP_CONCAT(r.id,'::',r.resposta,'::',r.correta SEPARATOR '||') as respostas
-          FROM perguntas p
-          LEFT JOIN respostas r ON p.id = r.pergunta_id";
+$query_base = "
+    SELECT 
+        p.*,
+        GROUP_CONCAT(
+            CONCAT_WS('::',
+                r.id,
+                r.resposta,
+                r.correta
+            ) SEPARATOR '||'
+        ) as respostas,
+        COUNT(DISTINCT pr.id) as total_usos,
+        ROUND(
+            SUM(CASE WHEN pr.correta = 1 THEN 1 ELSE 0 END) / 
+            COUNT(DISTINCT pr.id) * 100,
+            1
+        ) as taxa_acerto
+    FROM perguntas p
+    LEFT JOIN respostas r ON p.id = r.pergunta_id
+    LEFT JOIN partidas_respostas pr ON r.id = pr.resposta_id
+";
 
 $where = [];
 $params = [];
 
+// Aplicar filtros
 if ($categoria) {
     $where[] = "p.categoria = :categoria";
     $params[':categoria'] = $categoria;
@@ -44,18 +70,24 @@ if ($busca) {
     $params[':busca'] = "%{$busca}%";
 }
 
+// Montar cláusula WHERE
 if (!empty($where)) {
-    $query .= " WHERE " . implode(" AND ", $where);
+    $query_base .= " WHERE " . implode(" AND ", $where);
 }
 
-$query .= " GROUP BY p.id";
+$query_base .= " GROUP BY p.id";
 
 // Contar total de registros
 try {
-    $stmt = $conexao->prepare("SELECT COUNT(DISTINCT p.id) as total FROM perguntas p LEFT JOIN respostas r ON p.id = r.pergunta_id" . 
-        (!empty($where) ? " WHERE " . implode(" AND ", $where) : ""));
+    $query_count = "SELECT COUNT(DISTINCT p.id) as total FROM perguntas p";
+    if (!empty($where)) {
+        $query_count .= " LEFT JOIN respostas r ON p.id = r.pergunta_id WHERE " . implode(" AND ", $where);
+    }
+    
+    $stmt = $conexao->prepare($query_count);
     $stmt->execute($params);
     $total_registros = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+    
 } catch(PDOException $e) {
     registrar_log('erro', 'Erro ao contar registros: ' . $e->getMessage());
     $total_registros = 0;
@@ -63,11 +95,16 @@ try {
 
 // Calcular total de páginas
 $total_paginas = ceil($total_registros / $itens_por_pagina);
+$pagina_atual = min($pagina_atual, $total_paginas);
 
 // Buscar perguntas com paginação
 try {
-    $query .= " ORDER BY p.id DESC LIMIT :offset, :limit";
-    $stmt = $conexao->prepare($query);
+    $query_completa = $query_base . " 
+        ORDER BY p.id DESC 
+        LIMIT :offset, :limit
+    ";
+    
+    $stmt = $conexao->prepare($query_completa);
     
     foreach($params as $key => $value) {
         $stmt->bindValue($key, $value);
@@ -78,6 +115,7 @@ try {
     
     $stmt->execute();
     $perguntas = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
 } catch(PDOException $e) {
     registrar_log('erro', 'Erro ao buscar perguntas: ' . $e->getMessage());
     $perguntas = [];
@@ -85,39 +123,70 @@ try {
 
 // Buscar categorias disponíveis
 try {
-    $stmt = $conexao->query("SELECT DISTINCT categoria FROM perguntas ORDER BY categoria");
+    $stmt = $conexao->query("
+        SELECT DISTINCT categoria 
+        FROM perguntas 
+        WHERE categoria IS NOT NULL
+        ORDER BY categoria
+    ");
     $categorias = $stmt->fetchAll(PDO::FETCH_COLUMN);
 } catch(PDOException $e) {
     registrar_log('erro', 'Erro ao buscar categorias: ' . $e->getMessage());
     $categorias = [];
 }
 
+// Processar respostas para exibição
+foreach ($perguntas as &$pergunta) {
+    if (!empty($pergunta['respostas'])) {
+        $respostas = array_map(function($resp) {
+            list($id, $texto, $correta) = explode('::', $resp);
+            return [
+                'id' => $id,
+                'texto' => $texto,
+                'correta' => $correta
+            ];
+        }, explode('||', $pergunta['respostas']));
+        
+        $pergunta['total_respostas'] = count($respostas);
+        $pergunta['respostas_formatadas'] = $respostas;
+    } else {
+        $pergunta['total_respostas'] = 0;
+        $pergunta['respostas_formatadas'] = [];
+    }
+}
+unset($pergunta);
+
+// Incluir cabeçalho
 require_once '../includes/header.php';
 ?>
 
+<!-- Início da estrutura da página -->
 <div class="admin-wrapper">
     <!-- Sidebar -->
     <aside class="admin-sidebar">
         <div class="sidebar-header">
-            <img src="<?php echo BASE_URL; ?>assets/img/admin-avatar.png" alt="Admin">
-            <h5><?php echo $_SESSION['admin_nome']; ?></h5>
-            <small class="text-white-50">Administrador</small>
+            <div class="sidebar-profile">
+                <div>
+                    <small class="text-muted">Painel de Controle</small>
+                    <h5 class="mb-0"><?php echo htmlspecialchars($_SESSION['admin_nome'] ?? 'Administrador'); ?></h5>  
+                </div>
+            </div>
         </div>
         
         <nav class="admin-menu">
-            <a href="index.php" class="menu-item">
+            <a href="<?php echo BASE_URL; ?>index.php" class="menu-item">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
-            <a href="perguntas.php" class="menu-item active">
+            <a href="<?php echo BASE_URL; ?>perguntas.php" class="menu-item active">
                 <i class="fas fa-question-circle"></i> Perguntas
             </a>
-            <a href="jogadores.php" class="menu-item">
+            <a href="<?php echo BASE_URL; ?>jogadores.php" class="menu-item">
                 <i class="fas fa-users"></i> Jogadores
             </a>
-            <a href="configuracoes.php" class="menu-item">
+            <a href="<?php echo BASE_URL; ?>configuracoes.php" class="menu-item">
                 <i class="fas fa-cog"></i> Configurações
             </a>
-            <a href="logout.php" class="menu-item text-danger">
+            <a href="<?php echo BASE_URL; ?>logout.php" class="menu-item text-danger">
                 <i class="fas fa-sign-out-alt"></i> Sair
             </a>
         </nav>
@@ -126,28 +195,40 @@ require_once '../includes/header.php';
     <!-- Conteúdo Principal -->
     <main class="admin-content">
         <div class="container-fluid">
-            <!-- Cabeçalho -->
+            <!-- Cabeçalho da Página -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h3">Gerenciar Perguntas</h1>
-                <button type="button" class="btn btn-admin-primary" data-bs-toggle="modal" data-bs-target="#addPerguntaModal">
-                    <i class="fas fa-plus"></i> Nova Pergunta
+                <div>
+                    <h1 class="h3 mb-0"><?php echo $titulo_pagina; ?></h1>
+                    <small class="text-muted">
+                        Total: <?php echo number_format($total_registros, 0, ',', '.'); ?> perguntas
+                    </small>
+                </div>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPerguntaModal">
+                    <i class="fas fa-plus me-1"></i> Nova Pergunta
                 </button>
             </div>
 
             <!-- Filtros -->
-            <div class="card mb-4">
+            <div class="card mb-4 border-0 shadow-sm">
                 <div class="card-body">
                     <form method="GET" class="row g-3">
                         <div class="col-md-4">
-                            <input type="text" class="form-control" name="busca" 
-                                   placeholder="Buscar pergunta..." value="<?php echo $busca; ?>">
+                            <div class="input-group">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" class="form-control" name="busca" 
+                                       placeholder="Buscar pergunta..." 
+                                       value="<?php echo htmlspecialchars($busca); ?>">
+                            </div>
                         </div>
                         <div class="col-md-3">
                             <select class="form-select" name="categoria">
                                 <option value="">Todas as categorias</option>
                                 <?php foreach($categorias as $cat): ?>
-                                <option value="<?php echo $cat; ?>" <?php echo $categoria == $cat ? 'selected' : ''; ?>>
-                                    <?php echo ucfirst($cat); ?>
+                                <option value="<?php echo htmlspecialchars($cat); ?>" 
+                                        <?php echo $categoria === $cat ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars(ucfirst($cat)); ?>
                                 </option>
                                 <?php endforeach; ?>
                             </select>
@@ -156,57 +237,75 @@ require_once '../includes/header.php';
                             <select class="form-select" name="dificuldade">
                                 <option value="">Todas as dificuldades</option>
                                 <?php foreach(DIFICULDADES as $key => $value): ?>
-                                <option value="<?php echo $key; ?>" <?php echo $dificuldade == $key ? 'selected' : ''; ?>>
-                                    <?php echo $value; ?>
+                                <option value="<?php echo $key; ?>" 
+                                        <?php echo $dificuldade === $key ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($value); ?>
                                 </option>
                                 <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <button type="submit" class="btn btn-admin-primary w-100">
-                                <i class="fas fa-search"></i> Filtrar
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fas fa-filter me-1"></i> Filtrar
                             </button>
                         </div>
                     </form>
                 </div>
             </div>
-            <!-- Tabela de Perguntas -->
-            <div class="card">
+
+            <!-- Lista de Perguntas -->
+            <div class="card border-0 shadow-sm">
                 <div class="card-body">
                     <?php if(empty($perguntas)): ?>
-                    <div class="alert alert-admin alert-admin-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Nenhuma pergunta encontrada com os filtros selecionados.
-                    </div>
+                        <div class="text-center py-5">
+                            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                            <h5>Nenhuma pergunta encontrada</h5>
+                            <p class="text-muted">
+                                <?php if($busca || $categoria || $dificuldade): ?>
+                                    Tente ajustar os filtros de busca
+                                <?php else: ?>
+                                    Comece adicionando uma nova pergunta
+                                <?php endif; ?>
+                            </p>
+                        </div>
                     <?php else: ?>
-                    <div class="table-responsive">
-                        <table class="table admin-table">
+                        <div class="table-responsive">
+                        <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th width="5%">#</th>
-                                    <th width="35%">Pergunta</th>
-                                    <th width="15%">Categoria</th>
-                                    <th width="10%">Dificuldade</th>
-                                    <th width="15%">Respostas</th>
-                                    <th width="10%">Data</th>
-                                    <th width="10%">Ações</th>
+                                    <th style="width: 5%">#</th>
+                                    <th style="width: 35%">Pergunta</th>
+                                    <th style="width: 15%">Categoria</th>
+                                    <th style="width: 10%">Dificuldade</th>
+                                    <th style="width: 15%">Estatísticas</th>
+                                    <th style="width: 10%">Data</th>
+                                    <th style="width: 10%">Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php foreach($perguntas as $pergunta): ?>
-                                <tr data-id="<?php echo $pergunta['id']; ?>">
+                                <tr>
                                     <td><?php echo $pergunta['id']; ?></td>
                                     <td>
-                                        <?php echo htmlspecialchars($pergunta['pergunta']); ?>
-                                        <?php if($pergunta['pontos'] > 10): ?>
-                                        <span class="badge badge-admin badge-warning ms-2">
-                                            +<?php echo $pergunta['pontos']; ?> pontos
-                                        </span>
-                                        <?php endif; ?>
+                                        <div class="d-flex align-items-center">
+                                            <div class="pergunta-texto">
+                                                <?php 
+                                                $texto_pergunta = htmlspecialchars($pergunta['pergunta']);
+                                                echo strlen($texto_pergunta) > 100 
+                                                    ? substr($texto_pergunta, 0, 100) . '...' 
+                                                    : $texto_pergunta;
+                                                ?>
+                                            </div>
+                                            <?php if($pergunta['pontos'] > 10): ?>
+                                                <span class="badge bg-warning text-dark ms-2">
+                                                    <?php echo $pergunta['pontos']; ?> pts
+                                                </span>
+                                            <?php endif; ?>
+                                        </div>
                                     </td>
                                     <td>
                                         <span class="badge bg-primary">
-                                            <?php echo ucfirst($pergunta['categoria']); ?>
+                                            <?php echo htmlspecialchars(ucfirst($pergunta['categoria'])); ?>
                                         </span>
                                     </td>
                                     <td>
@@ -216,62 +315,49 @@ require_once '../includes/header.php';
                                             'medio' => 'warning',
                                             'dificil' => 'danger'
                                         ];
-                                        $classe = $dificuldade_class[$pergunta['dificuldade']];
+                                        $classe = $dificuldade_class[$pergunta['dificuldade']] ?? 'secondary';
                                         ?>
                                         <span class="badge bg-<?php echo $classe; ?>">
-                                            <?php echo DIFICULDADES[$pergunta['dificuldade']]; ?>
+                                            <?php echo DIFICULDADES[$pergunta['dificuldade']] ?? 'Desconhecida'; ?>
                                         </span>
                                     </td>
                                     <td>
-                                        <?php
-                                        if (!empty($pergunta['respostas'])) {
-                                            $respostas = array_map(function($resp) {
-                                                list($id, $texto, $correta) = explode('::', $resp);
-                                                return [
-                                                    'id' => $id,
-                                                    'texto' => $texto,
-                                                    'correta' => $correta
-                                                ];
-                                            }, explode('||', $pergunta['respostas']));
-                                            
-                                            $total_respostas = count($respostas);
-                                            $resposta_correta = array_filter($respostas, function($r) {
-                                                return $r['correta'] == 1;
-                                            });
-                                            
-                                            echo "<span class='text-muted'>{$total_respostas} opções</span>";
-                                            echo "<br><small class='text-success'>1 correta</small>";
-                                        } else {
-                                            echo "<span class='text-danger'>Sem respostas</span>";
-                                        }
-                                        ?>
+                                        <div class="small">
+                                            <div class="mb-1">
+                                                <i class="fas fa-check-circle text-success"></i>
+                                                Taxa de acerto: 
+                                                <strong><?php echo number_format($pergunta['taxa_acerto'] ?? 0, 1); ?>%</strong>
+                                            </div>
+                                            <div>
+                                                <i class="fas fa-users text-primary"></i>
+                                                Total de usos: 
+                                                <strong><?php echo number_format($pergunta['total_usos'] ?? 0); ?></strong>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>
-                                        <small class="text-muted">
+                                        <div class="small text-muted">
                                             <?php echo date('d/m/Y', strtotime($pergunta['data_criacao'])); ?>
-                                        </small>
+                                        </div>
                                     </td>
                                     <td>
                                         <div class="btn-group">
                                             <button type="button" 
-                                                    class="btn btn-sm btn-admin-primary btn-visualizar"
+                                                    class="btn btn-sm btn-outline-primary btn-visualizar"
                                                     data-id="<?php echo $pergunta['id']; ?>"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Visualizar Detalhes">
+                                                    title="Visualizar">
                                                 <i class="fas fa-eye"></i>
                                             </button>
                                             <button type="button" 
-                                                    class="btn btn-sm btn-admin-warning btn-editar"
+                                                    class="btn btn-sm btn-outline-warning btn-editar"
                                                     data-id="<?php echo $pergunta['id']; ?>"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Editar Pergunta">
+                                                    title="Editar">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             <button type="button" 
-                                                    class="btn btn-sm btn-admin-danger btn-excluir"
+                                                    class="btn btn-sm btn-outline-danger btn-excluir"
                                                     data-id="<?php echo $pergunta['id']; ?>"
-                                                    data-bs-toggle="tooltip"
-                                                    title="Excluir Pergunta">
+                                                    title="Excluir">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -285,30 +371,21 @@ require_once '../includes/header.php';
                     <!-- Paginação -->
                     <?php if($total_paginas > 1): ?>
                     <div class="d-flex justify-content-between align-items-center mt-4">
-                        <div class="text-muted">
+                        <div class="text-muted small">
                             Mostrando <?php echo $offset + 1; ?> - 
                             <?php echo min($offset + $itens_por_pagina, $total_registros); ?> 
                             de <?php echo $total_registros; ?> registros
                         </div>
-                        <nav aria-label="Navegação das páginas">
-                            <ul class="pagination mb-0">
+                        <nav aria-label="Navegação">
+                            <ul class="pagination pagination-sm mb-0">
                                 <?php if($pagina_atual > 1): ?>
                                 <li class="page-item">
                                     <a class="page-link" href="?pagina=1<?php 
-                                        echo $categoria ? '&categoria='.$categoria : ''; 
-                                        echo $dificuldade ? '&dificuldade='.$dificuldade : ''; 
-                                        echo $busca ? '&busca='.$busca : ''; 
+                                        echo $categoria ? '&categoria='.urlencode($categoria) : ''; 
+                                        echo $dificuldade ? '&dificuldade='.urlencode($dificuldade) : ''; 
+                                        echo $busca ? '&busca='.urlencode($busca) : ''; 
                                     ?>">
                                         <i class="fas fa-angle-double-left"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?php echo $pagina_atual - 1; ?><?php 
-                                        echo $categoria ? '&categoria='.$categoria : ''; 
-                                        echo $dificuldade ? '&dificuldade='.$dificuldade : ''; 
-                                        echo $busca ? '&busca='.$busca : ''; 
-                                    ?>">
-                                        <i class="fas fa-angle-left"></i>
                                     </a>
                                 </li>
                                 <?php endif; ?>
@@ -316,45 +393,39 @@ require_once '../includes/header.php';
                                 <?php
                                 $inicio = max(1, $pagina_atual - 2);
                                 $fim = min($total_paginas, $pagina_atual + 2);
-                                
-                                if($inicio > 1) {
-                                    echo '<li class="page-item disabled"><span class="page-link">...</span></li>';
-                                }
-                                
-                                for($i = $inicio; $i <= $fim; $i++):
-                                ?>
-                                <li class="page-item <?php echo $i == $pagina_atual ? 'active' : ''; ?>">
-                                    <a class="page-link" href="?pagina=<?php echo $i; ?><?php 
-                                        echo $categoria ? '&categoria='.$categoria : ''; 
-                                        echo $dificuldade ? '&dificuldade='.$dificuldade : ''; 
-                                        echo $busca ? '&busca='.$busca : ''; 
-                                    ?>"><?php echo $i; ?></a>
-                                </li>
-                                <?php endfor; ?>
 
-                                <?php if($fim < $total_paginas): ?>
-                                <li class="page-item disabled"><span class="page-link">...</span></li>
-                                <?php endif; ?>
+                                if($inicio > 1): ?>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                <?php endif;
 
-                                <?php if($pagina_atual < $total_paginas): ?>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?php echo $pagina_atual + 1; ?><?php 
-                                        echo $categoria ? '&categoria='.$categoria : ''; 
-                                        echo $dificuldade ? '&dificuldade='.$dificuldade : ''; 
-                                        echo $busca ? '&busca='.$busca : ''; 
-                                    ?>">
-                                        <i class="fas fa-angle-right"></i>
-                                    </a>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" href="?pagina=<?php echo $total_paginas; ?><?php 
-                                        echo $categoria ? '&categoria='.$categoria : ''; 
-                                        echo $dificuldade ? '&dificuldade='.$dificuldade : ''; 
-                                        echo $busca ? '&busca='.$busca : ''; 
-                                    ?>">
-                                        <i class="fas fa-angle-double-right"></i>
-                                    </a>
-                                </li>
+                                for($i = $inicio; $i <= $fim; $i++): ?>
+                                    <li class="page-item <?php echo $i == $pagina_atual ? 'active' : ''; ?>">
+                                        <a class="page-link" href="?pagina=<?php echo $i; ?><?php 
+                                            echo $categoria ? '&categoria='.urlencode($categoria) : ''; 
+                                            echo $dificuldade ? '&dificuldade='.urlencode($dificuldade) : ''; 
+                                            echo $busca ? '&busca='.urlencode($busca) : ''; 
+                                        ?>"><?php echo $i; ?></a>
+                                    </li>
+                                <?php endfor;
+
+                                if($fim < $total_paginas): ?>
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                <?php endif;
+
+                                if($pagina_atual < $total_paginas): ?>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?pagina=<?php echo $total_paginas; ?><?php 
+                                            echo $categoria ? '&categoria='.urlencode($categoria) : ''; 
+                                            echo $dificuldade ? '&dificuldade='.urlencode($dificuldade) : ''; 
+                                            echo $busca ? '&busca='.urlencode($busca) : ''; 
+                                        ?>">
+                                            <i class="fas fa-angle-double-right"></i>
+                                        </a>
+                                    </li>
                                 <?php endif; ?>
                             </ul>
                         </nav>
@@ -366,23 +437,34 @@ require_once '../includes/header.php';
         </div>
     </main>
 </div>
-
 <!-- Modal Adicionar Pergunta -->
-<div class="modal fade modal-admin" id="addPerguntaModal" tabindex="-1">
+<!-- Modal Adicionar Pergunta - Remover seção de feedback -->
+<div class="modal fade" id="addPerguntaModal" tabindex="-1" aria-labelledby="addPerguntaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="formAddPergunta" class="needs-validation" novalidate>
                 <div class="modal-header">
-                    <h5 class="modal-title">Adicionar Nova Pergunta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="addPerguntaModalLabel">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Nova Pergunta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
                     <!-- Pergunta -->
                     <div class="mb-4">
-                        <label class="form-label">Pergunta <span class="text-danger">*</span></label>
-                        <textarea class="form-control editor-admin" name="pergunta" rows="3" required></textarea>
+                        <label class="form-label">
+                            Pergunta
+                            <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" 
+                                name="pergunta" 
+                                rows="3" 
+                                required
+                                minlength="10"
+                                placeholder="Digite a pergunta..."></textarea>
                         <div class="invalid-feedback">
-                            Por favor, insira a pergunta.
+                            A pergunta deve ter no mínimo 10 caracteres.
                         </div>
                     </div>
 
@@ -390,18 +472,21 @@ require_once '../includes/header.php';
                         <!-- Categoria -->
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Categoria <span class="text-danger">*</span></label>
+                                <label class="form-label">
+                                    Categoria
+                                    <span class="text-danger">*</span>
+                                </label>
                                 <select class="form-select" name="categoria" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($categorias as $cat): ?>
-                                    <option value="<?php echo $cat; ?>">
-                                        <?php echo ucfirst($cat); ?>
+                                    <option value="<?php echo htmlspecialchars($cat); ?>">
+                                        <?php echo htmlspecialchars(ucfirst($cat)); ?>
                                     </option>
                                     <?php endforeach; ?>
                                     <option value="nova">+ Nova Categoria</option>
                                 </select>
                                 <div class="invalid-feedback">
-                                    Por favor, selecione uma categoria.
+                                    Selecione uma categoria.
                                 </div>
                             </div>
                         </div>
@@ -409,10 +494,16 @@ require_once '../includes/header.php';
                         <!-- Nova Categoria (inicialmente oculto) -->
                         <div class="col-md-4" id="novaCategoriaGroup" style="display: none;">
                             <div class="mb-3">
-                                <label class="form-label">Nova Categoria <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" name="nova_categoria">
+                                <label class="form-label">
+                                    Nova Categoria
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       name="nova_categoria"
+                                       placeholder="Nome da nova categoria">
                                 <div class="invalid-feedback">
-                                    Por favor, insira o nome da nova categoria.
+                                    Digite o nome da nova categoria.
                                 </div>
                             </div>
                         </div>
@@ -420,15 +511,20 @@ require_once '../includes/header.php';
                         <!-- Dificuldade -->
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Dificuldade <span class="text-danger">*</span></label>
+                                <label class="form-label">
+                                    Dificuldade
+                                    <span class="text-danger">*</span>
+                                </label>
                                 <select class="form-select" name="dificuldade" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach(DIFICULDADES as $key => $value): ?>
-                                    <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                    <option value="<?php echo $key; ?>">
+                                        <?php echo htmlspecialchars($value); ?>
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
                                 <div class="invalid-feedback">
-                                    Por favor, selecione a dificuldade.
+                                    Selecione a dificuldade.
                                 </div>
                             </div>
                         </div>
@@ -436,8 +532,15 @@ require_once '../includes/header.php';
                         <!-- Pontos -->
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Pontos</label>
-                                <input type="number" class="form-control" name="pontos" value="10" min="1" max="100">
+                                <label class="form-label">
+                                    Pontos
+                                </label>
+                                <input type="number" 
+                                       class="form-control" 
+                                       name="pontos" 
+                                       value="10" 
+                                       min="1" 
+                                       max="100">
                                 <div class="form-text">
                                     Valor padrão: 10 pontos
                                 </div>
@@ -447,7 +550,10 @@ require_once '../includes/header.php';
 
                     <!-- Opções de Resposta -->
                     <div class="mb-4">
-                        <label class="form-label">Opções de Resposta <span class="text-danger">*</span></label>
+                        <label class="form-label">
+                            Opções de Resposta
+                            <span class="text-danger">*</span>
+                        </label>
                         <div id="opcoesContainer">
                             <!-- Opções serão adicionadas via JavaScript -->
                         </div>
@@ -455,21 +561,17 @@ require_once '../includes/header.php';
                             <i class="fas fa-plus"></i> Adicionar Opção
                         </button>
                         <div class="form-text">
-                            Marque o radio button para indicar a resposta correta
+                            Selecione o radio button para indicar a resposta correta
                         </div>
-                    </div>
-
-                    <!-- Feedback -->
-                    <div class="mb-3">
-                        <label class="form-label">Feedback (opcional)</label>
-                        <textarea class="form-control" name="feedback" rows="2" 
-                                placeholder="Explicação que será mostrada após o jogador responder..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-admin-primary">
-                        <i class="fas fa-save"></i> Salvar Pergunta
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>
+                        Salvar Pergunta
                     </button>
                 </div>
             </form>
@@ -478,12 +580,16 @@ require_once '../includes/header.php';
 </div>
 
 <!-- Modal Visualizar Pergunta -->
-<div class="modal fade modal-admin" id="viewPerguntaModal" tabindex="-1">
+<!-- Modal Visualizar Pergunta -->
+<div class="modal fade" id="viewPerguntaModal" tabindex="-1" aria-labelledby="viewPerguntaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Detalhes da Pergunta</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <h5 class="modal-title" id="viewPerguntaModalLabel">
+                    <i class="fas fa-eye me-2"></i>
+                    Detalhes da Pergunta
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
                 <div class="view-pergunta-content">
@@ -491,32 +597,44 @@ require_once '../includes/header.php';
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                <button type="button" class="btn btn-admin-primary btn-editar-view">
-                    <i class="fas fa-edit"></i> Editar
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    Fechar
+                </button>
+                <button type="button" class="btn btn-warning btn-editar-view">
+                    <i class="fas fa-edit me-1"></i>
+                    Editar
                 </button>
             </div>
         </div>
     </div>
 </div>
-
 <!-- Modal Editar Pergunta -->
-<div class="modal fade modal-admin" id="editPerguntaModal" tabindex="-1">
+<div class="modal fade" id="editPerguntaModal" tabindex="-1" aria-labelledby="editPerguntaModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <form id="formEditPergunta" class="needs-validation" novalidate>
                 <input type="hidden" name="id" value="">
                 <div class="modal-header">
-                    <h5 class="modal-title">Editar Pergunta</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="editPerguntaModalLabel">
+                        <i class="fas fa-edit me-2"></i>
+                        Editar Pergunta
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Mesmo conteúdo do modal de adicionar, mas com dados preenchidos via JavaScript -->
+                    <!-- Pergunta -->
                     <div class="mb-4">
-                        <label class="form-label">Pergunta <span class="text-danger">*</span></label>
-                        <textarea class="form-control editor-admin" name="pergunta" rows="3" required></textarea>
+                        <label class="form-label">
+                            Pergunta
+                            <span class="text-danger">*</span>
+                        </label>
+                        <textarea class="form-control" 
+                                name="pergunta" 
+                                rows="3" 
+                                required
+                                minlength="10"></textarea>
                         <div class="invalid-feedback">
-                            Por favor, insira a pergunta.
+                            A pergunta deve ter no mínimo 10 caracteres.
                         </div>
                     </div>
 
@@ -524,27 +642,41 @@ require_once '../includes/header.php';
                         <!-- Categoria -->
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Categoria <span class="text-danger">*</span></label>
+                                <label class="form-label">
+                                    Categoria
+                                    <span class="text-danger">*</span>
+                                </label>
                                 <select class="form-select" name="categoria" required>
                                     <option value="">Selecione...</option>
                                     <?php foreach($categorias as $cat): ?>
-                                    <option value="<?php echo $cat; ?>">
-                                        <?php echo ucfirst($cat); ?>
+                                    <option value="<?php echo htmlspecialchars($cat); ?>">
+                                        <?php echo htmlspecialchars(ucfirst($cat)); ?>
                                     </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Selecione uma categoria.
+                                </div>
                             </div>
                         </div>
 
                         <!-- Dificuldade -->
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label class="form-label">Dificuldade <span class="text-danger">*</span></label>
+                                <label class="form-label">
+                                    Dificuldade
+                                    <span class="text-danger">*</span>
+                                </label>
                                 <select class="form-select" name="dificuldade" required>
                                     <?php foreach(DIFICULDADES as $key => $value): ?>
-                                    <option value="<?php echo $key; ?>"><?php echo $value; ?></option>
+                                    <option value="<?php echo $key; ?>">
+                                        <?php echo htmlspecialchars($value); ?>
+                                    </option>
                                     <?php endforeach; ?>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Selecione a dificuldade.
+                                </div>
                             </div>
                         </div>
 
@@ -552,32 +684,42 @@ require_once '../includes/header.php';
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">Pontos</label>
-                                <input type="number" class="form-control" name="pontos" min="1" max="100">
+                                <input type="number" 
+                                       class="form-control" 
+                                       name="pontos" 
+                                       min="1" 
+                                       max="100">
+                                <div class="form-text">
+                                    Entre 1 e 100 pontos
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Opções de Resposta -->
                     <div class="mb-4">
-                        <label class="form-label">Opções de Resposta <span class="text-danger">*</span></label>
+                        <label class="form-label">
+                            Opções de Resposta
+                            <span class="text-danger">*</span>
+                        </label>
                         <div id="opcoesContainerEdit">
                             <!-- Opções serão preenchidas via JavaScript -->
                         </div>
                         <button type="button" class="btn btn-sm btn-secondary mt-2" id="btnAddOpcaoEdit">
                             <i class="fas fa-plus"></i> Adicionar Opção
                         </button>
-                    </div>
-
-                    <!-- Feedback -->
-                    <div class="mb-3">
-                        <label class="form-label">Feedback (opcional)</label>
-                        <textarea class="form-control" name="feedback" rows="2"></textarea>
+                        <div class="form-text">
+                            Selecione o radio button para indicar a resposta correta
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="submit" class="btn btn-admin-primary">
-                        <i class="fas fa-save"></i> Salvar Alterações
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save me-1"></i>
+                        Salvar Alterações
                     </button>
                 </div>
             </form>
@@ -585,8 +727,28 @@ require_once '../includes/header.php';
     </div>
 </div>
 
-<!-- Scripts específicos da página -->
-<?php 
-$scripts_pagina = ['assets/js/perguntas.js'];
-require_once '../includes/footer.php'; 
-?>
+<!-- Dependências JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
+<script src="<?php echo BASE_URL; ?>../assets/js/perguntas.js"></script>
+
+<!-- Scripts específicos e inicializações -->
+<script>
+// Configurações globais do SweetAlert2
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true
+});
+
+// Inicialização de tooltips Bootstrap
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+
+<?php require_once '../includes/footer.php'; ?>

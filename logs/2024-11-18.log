@@ -1,0 +1,33 @@
+[2024-11-18 01:40:14] [::1] [Visitante] [info]: Novo jogador criado: ID 3, Nome: Niangi
+[2024-11-18 02:34:43] [::1] [Visitante] [info]: Novo jogador criado: ID 4, Nome: Mariana
+[2024-11-18 02:41:51] [::1] [Visitante] [info]: Novo jogador criado: ID 5, Nome: Ana
+[2024-11-18 02:59:48] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-18 02:59:56] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-18 03:03:04] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-18 05:54:15] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-18 05:55:07] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-18 05:55:32] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-18 05:55:39] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-18 05:56:24] [::1] [Visitante] [erro]: Erro no login: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'field list'
+[2024-11-18 06:10:33] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:10:33] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:10:33] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:10:33] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:10:54] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:10:54] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:10:54] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:10:54] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:19:54] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:19:54] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:19:54] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:19:54] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:06] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:06] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:06] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:06] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:21] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:21] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:21] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:21] [::1] [Visitante] [erro]: Erro ao criar jogador: Este nome já está em uso
+[2024-11-18 06:21:34] [::1] [Visitante] [info]: Novo jogador criado: ID 6, Nome: Roberto
+[2024-11-18 06:47:28] [::1] [Visitante] [info]: Novo jogador criado: ID 7, Nome: Marta
